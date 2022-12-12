@@ -50,9 +50,10 @@ for ij, date_d0 in enumerate(dates_gosat2):
 
     start_time  = time.time()
 
-    year, month, day  = date_d0.year, date_d0.month, date_d0.day
+    year, month, day, hour, minute  = date_d0.year, date_d0.month, date_d0.day, string_now[11:13], string_now[14:16]
     date_name = str(year)+str(month).zfill(2)+str(day).zfill(2)
     date_name_hour = str(year)+str(month).zfill(2)+str(day).zfill(2)+string_now.replace(':', '')
+    date_name_short =  str(year)+str(month).zfill(2)+str(day).zfill(2)+hour+minute
 
     print("Info | Begin Processing of L1b at: ", date_name)
 
@@ -195,7 +196,17 @@ for ij, date_d0 in enumerate(dates_gosat2):
     proc.wait()
 
 
-    print("Info | STEP 5: Save processed L1b lists")
+    print("Info | STEP 4.5: Run RemoTeC to NetCDF script")
+    proc = subprocess.Popen(["/deos/andrewb/anaconda3/bin/python","FP_input.py","-d "+str(date_name_short)],cwd = dir_nrt+'PROXY/')
+    proc.wait()
+
+
+    print("Info | STEP 5.1: Running proxy retrieval")
+    proc = subprocess.Popen(["./fp_retrieval.sh",str(date_name_short),str(date_name_short)],cwd=dir_nrt+'FP/')
+    proc.wait()
+
+
+    print("Info | STEP 6: Save processed L1b lists")
     with open(dir_nrt + 'LOG/processed_'+str(date_name), "a") as logfile:
         for l1b_file in files_processing:
             logfile.write(l1b_file+"\n")
