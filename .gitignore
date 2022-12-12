@@ -1,0 +1,8 @@
+FP/
+ILS/
+LOG/
+PREPROCESS/
+PREPROCESS_INI/
+PROXY/
+cronjob_CAMS_GOSAT2.sh
+main_dev.py
